@@ -125,7 +125,9 @@ class entity:
         taxes = 0
         if len(self.entities) == 0:
             dice = int(math.log(self.pop,10))-3-self.sdef-int(self.control)*2
-            boni = int((self.ind+self.inf)*5 - (self.sci + self.hea + self.sec + self.dip*5)/2 - self.gdef*5 +math.log(self.pop,100))+bonus
+            # Lambda function to add free gdef
+            gdefl = (lambda x: x-1 if (x>0) else 0)
+            boni = int((self.ind+self.inf)*5 - (self.sci + self.hea + self.sec + self.dip*5)/2 - gdefl(self.gdef)*5 +math.log(self.pop,100))+bonus
             multiplier = 1
             if dice < 0:
                 dice = dice * (-1)
