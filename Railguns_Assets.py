@@ -45,11 +45,11 @@ class Assets(Frame):
 
     # Updates the stats of the entities
     def update(self):
-        self.faction.update()
+        self.faction.update(self.page)
 
     def refresh(self):
-        self.faction.destroy_gui()
-        self.faction.place(1, 3)
+        self.faction.destroy_gui(self.page)
+        self.faction.place(1, 3, self.page)
 
     def pop(self):
         self.pop_lbl.configure(text=int((int(self.pop_g.get())/100)*int(self.pop_c.get())*(1-int(self.pop_c.get())/int(self.pop_l.get()))))
@@ -58,8 +58,21 @@ class Assets(Frame):
         self.faction.growPop(5)
         self.refresh()
 
+    def right(self):
+        self.faction.destroy_gui(self.page)
+        self.page+=1
+        self.faction.place(1, 3, self.page)
+
+    def left(self):
+        self.faction.destroy_gui(self.page)
+        if self.page>0:
+            self.page-=1
+        self.faction.place(1, 3, self.page)
+
     def __init__(self, window):
         super(Assets, self).__init__(window)
+
+        self.page=0
 
         # Bonus Label/Entry
 
@@ -111,6 +124,14 @@ class Assets(Frame):
 
         self.save_btn = Button(self, width=15, text="Save", command=self.save)
         self.save_btn.grid(column=5, row=0, sticky=W)
+
+        # Page buttons
+
+        self.left_btn = Button(self, width=15, text="<<<", command=self.left)
+        self.left_btn.grid(column=6, row=0, sticky=W)
+
+        self.right_btn = Button(self, width=15, text=">>>", command=self.right)
+        self.right_btn.grid(column=6, row=1, sticky=W)
 
         # A line of gray blanks to make it look better
 
