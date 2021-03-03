@@ -147,7 +147,7 @@ class entity:
             for i in self.entities:
                 i.growPop(multipler)
 
-    def place(self, col, row):
+    def place(self, col, row, page):
 
         # Placing new Entries
 
@@ -228,19 +228,30 @@ class entity:
 
             # Remove entity buttons
             for i in range(len(self.entities)):
-                self.remove_btn.append(Button(self.window, width=15, text="Remove Entity", command=partial(self.remove, i)))
+                if i >= page*6 and i < (page+1)*6:
+                    self.remove_btn.append(Button(self.window, width=15, text="Remove Entity", command=partial(self.remove, i)))
 
             # Calls place on any sub entities
             row+=4
+            print("-----------------------")
+            print(len(self.entities))
+            print("-----------------------")
             for i in range(len(self.entities)):
-                col+=1
-                self.remove_btn[i].grid(column=col, row=row)
-                col = self.entities[i].place(col, row+1)
+                print("xxxxxxxxxxxxxxxxxxxx")
+                print(i)
+                print("xxxxxxxxxxxxxxxxxxxx")
+                if i >= page*6 and i < (page+1)*6:
+                    print("yyyyyyyyyyyyyyyyyyy")
+                    print(i)
+                    print("yyyyyyyyyyyyyyyyyyy")
+                    col+=1
+                    self.remove_btn[i%6].grid(column=col, row=row)
+                    col = self.entities[i].place(col, row+1, page)
 
         return col
 
     # Destroys all gui elements, then calls destroy_gui on each sub entity
-    def destroy_gui(self):
+    def destroy_gui(self, page):
         self.name_e.destroy()
         self.pop_e.destroy()
         self.limit_e.destroy()
@@ -256,15 +267,13 @@ class entity:
         self.control_c.destroy()
 
         self.add_btn.destroy()
-
-        for i in self.remove_btn:
-            i.destroy()
-
-        for i in self.entities:
-            i.destroy_gui()
+        for i in range(len(self.entities)):
+            if i >= page*6 and i < (page+1)*6:
+                self.remove_btn[i%6].destroy()
+                self.entities[i].destroy_gui(page)
 
     # Updates the entities values with the values in the gui entry fields, then calls update on each sub entity
-    def update(self):
+    def update(self, page):
         if len(self.entities) == 0:
             self.name = self.name_e.get()
             self.pop = int(self.pop_e.get())
@@ -283,10 +292,11 @@ class entity:
             self.pop = 0
             self.limit = 0
             self.control = bool(int(self.var.get()))
-            for i in self.entities:
-                i.update()
-                self.pop += i.pop
-                self.limit += i.limit
+            for i in range(len(self.entities)):
+                if i >= page*6 and i < (page+1)*6:
+                    self.entities[i].update(page)
+                self.pop += self.entities[i].pop
+                self.limit += self.entities[i].limit
 
 
     # Adds a new sub entity
