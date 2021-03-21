@@ -127,7 +127,7 @@ class entity:
             dice = int(math.log(self.pop,10))-3-self.sdef-int(self.control)*2
             # Lambda function to add free gdef
             gdefl = (lambda x: x-1 if (x>0) else 0)
-            boni = int((self.ind+self.inf)*5 - (self.sci + self.hea + self.sec + self.dip*5)/2 - gdefl(self.gdef)*5 +math.log(self.pop,100))+bonus
+            boni = int((self.ind+self.inf)*5 - (self.sci + self.hea + self.sec + self.dip)*2.5 - gdefl(self.gdef)*5 +math.log(self.pop,100))+bonus
             multiplier = 1
             if dice < 0:
                 dice = dice * (-1)
@@ -137,7 +137,7 @@ class entity:
             return taxes+boni
         else:
             for i in self.entities:
-                taxes += i.calcBudget(bonus-(self.sdef*0.5))
+                taxes += i.calcBudget(bonus)
             return taxes
 
     def growPop(self, multipler):
@@ -233,17 +233,8 @@ class entity:
 
             # Calls place on any sub entities
             row+=4
-            print("-----------------------")
-            print(len(self.entities))
-            print("-----------------------")
             for i in range(len(self.entities)):
-                print("xxxxxxxxxxxxxxxxxxxx")
-                print(i)
-                print("xxxxxxxxxxxxxxxxxxxx")
                 if i >= page*6 and i < (page+1)*6:
-                    print("yyyyyyyyyyyyyyyyyyy")
-                    print(i)
-                    print("yyyyyyyyyyyyyyyyyyy")
                     col+=1
                     self.remove_btn[i%6].grid(column=col, row=row)
                     col = self.entities[i].place(col, row+1, page)
@@ -318,3 +309,21 @@ class entity:
         for i in self.entities:
             line += "    "+i.toString()
         return line
+
+    def armycap(self):
+        cap = 0
+        if len(self.entities) == 0:
+            cap +=self.inf*3
+        else:
+            for i in range(len(self.entities)):
+                    cap +=self.entities[i].armycap()
+        return cap
+
+    def shipcap(self):
+        cap = 0
+        if len(self.entities) == 0:
+            cap +=self.ind
+        else:
+            for i in range(len(self.entities)):
+                    cap +=self.entities[i].shipcap()
+        return cap
