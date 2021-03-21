@@ -46,6 +46,8 @@ class Assets(Frame):
     # Updates the stats of the entities
     def update(self):
         self.faction.update(self.page)
+        self.armycap()
+        self.shipcap()
 
     def refresh(self):
         self.faction.destroy_gui(self.page)
@@ -68,6 +70,13 @@ class Assets(Frame):
         if self.page>0:
             self.page-=1
         self.faction.place(1, 3, self.page)
+
+    def armycap(self):
+
+        self.army_lbl.configure(text="Army cap: %i" % self.faction.armycap())
+
+    def shipcap(self):
+        self.ship_lbl.configure(text="Ship cap: %i" % self.faction.shipcap())
 
     def __init__(self, window):
         super(Assets, self).__init__(window)
@@ -132,6 +141,14 @@ class Assets(Frame):
 
         self.right_btn = Button(self, width=15, text=">>>", command=self.right)
         self.right_btn.grid(column=6, row=1, sticky=W)
+
+        # Capacity
+
+        self.army_lbl = Label(self, width=15, text="Army cap:")
+        self.army_lbl.grid(column=7, row=0, sticky=W)
+
+        self.ship_lbl = Label(self, width=15, text="Ship cap:")
+        self.ship_lbl.grid(column=7, row=1, sticky=W)
 
         # A line of gray blanks to make it look better
 
