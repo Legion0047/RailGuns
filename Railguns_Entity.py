@@ -7,7 +7,6 @@ from tkinter import *
 from tkinter.ttk import *
 
 class entity:
-    # Name, x+1 number of dice if there are no subentities, +x to any roll in sub entities/this entity, +10*x% to budget in any sub entities/this entity, +x to the budget, sub entity
     def __init__(self, window, name="New Entity", pop=1, limit=1, control=False, ind=1, inf=1, sci=0, hea=0, sec=0, dip=0, gdef=0, sdef=0, entities=None):
         if entities is None:
             entities = []
@@ -120,11 +119,13 @@ class entity:
     # Calculates the Budget.
     # Adds raw to the current calculated budget
     # If there are no sub entities: roll log 10 (pop) - 3 - sdef dice, add ind + infr - (sci + hea + sec + dip)/2 - gdef + log 100 (pop) + bonus
-    # If there are sub entities: calls CalcBudget for each sub entity with the bonus reduced by sdef*0.5
+    # If there are sub entities: calls CalcBudget for each sub entity
     def calcBudget(self, bonus=0):
         taxes = 0
         if len(self.entities) == 0:
-            dice = int(math.log(self.pop,10))-3-self.sdef-int(self.control)*2
+            # Lambda function to add free sdef
+            sdefl = (lambda x: x-1 if (x>0) else 0)
+            dice = int(math.log(self.pop,10))-3-sdefl(self.sdef)-int(self.control)*2
             # Lambda function to add free gdef
             gdefl = (lambda x: x-1 if (x>0) else 0)
             boni = int((self.ind+self.inf)*5 - (self.sci + self.hea + self.sec + self.dip)*2.5 - gdefl(self.gdef)*5 +math.log(self.pop,100))+bonus
